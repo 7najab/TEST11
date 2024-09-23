@@ -1,0 +1,93 @@
+# Клас для книги
+class Book:
+    def __init__(self, title, author):
+        self.title = title
+        self.author = author
+
+    def __repr__(self):
+        return f"Книга(назва='{self.title}', автор='{self.author}')"
+
+# Клас колекції книг
+class BookCollection:
+    def __init__(self):
+        self._books = []
+
+    def add_book(self, book):
+        self._books.append(book)
+
+    def find_books_by_author(self, author):
+        return [book for book in self._books if book.author.lower() == author.lower()]
+
+    def remove_book(self, title):
+        self._books = [book for book in self._books if book.title.lower() != title.lower()]
+
+    def get_books(self):
+        return self._books
+
+# Клас Proxy для контролю доступу до BookCollection
+class ProxyBookCollection:
+    def __init__(self):
+        self._real_collection = BookCollection()
+
+    def add_book(self, book):
+        print(f"Додаємо книгу: {book}")
+        self._real_collection.add_book(book)
+
+    def find_books_by_author(self, author):
+        print(f"Шукаємо книги автора: {author}")
+        return self._real_collection.find_books_by_author(author)
+
+    def remove_book(self, title):
+        print(f"Видаляємо книгу з назвою: {title}")
+        self._real_collection.remove_book(title)
+
+    def get_books(self):
+        print("Отримуємо всі книги")
+        return self._real_collection.get_books()
+
+# Консольна програма
+def main():
+    proxy_collection = ProxyBookCollection()
+
+    while True:
+        print("\n1. Додати книгу\n2. Знайти книги за автором\n3. Видалити книгу\n4. Переглянути всі книги\n5. Вийти")
+        choice = input("Оберіть опцію (1-5): ").strip()
+
+        # Перевірка правильності введення опції
+        if choice not in ['1', '2', '3', '4', '5']:
+            print("Неправильний вибір. Спробуйте ще раз.")
+            continue  # Повертаємося до вибору опції
+
+        if choice == '1':
+            title = input("Введіть назву книги: ")
+            author = input("Введіть автора книги: ")
+            book = Book(title, author)
+            proxy_collection.add_book(book)
+
+        elif choice == '2':
+            author = input("Введіть ім'я автора: ")
+            books_by_author = proxy_collection.find_books_by_author(author)
+            if books_by_author:
+                print(f"Книги автора {author}: {books_by_author}")
+            else:
+                print(f"Книг автора {author} не знайдено")
+
+        elif choice == '3':
+            title = input("Введіть назву книги, яку потрібно видалити: ")
+            proxy_collection.remove_book(title)
+
+        elif choice == '4':
+            books = proxy_collection.get_books()
+            if books:
+                print("Поточні книги у колекції:")
+                for book in books:
+                    print(book)
+            else:
+                print("Колекція порожня.")
+
+        elif choice == '5':
+            print("Завершення програми.")
+            break
+
+if __name__ == "__main__":
+    main()

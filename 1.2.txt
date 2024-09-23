@@ -1,0 +1,94 @@
+# Базовий клас для працівника
+class Employee:
+    def __init__(self, name, position):
+        self.name = name
+        self.position = position
+
+    def get_salary(self):
+        raise NotImplementedError("Метод має бути реалізований у підкласі")
+
+    def __repr__(self):
+        return f"Працівник: {self.name}, Посада: {self.position}"
+
+
+# Класи для кожної посади
+class DepartmentHead(Employee):
+    def __init__(self, name):
+        super().__init__(name, "Начальник відділу")
+
+    def get_salary(self):
+        return 2000  # Зарплата начальника відділу
+
+
+class ChiefEngineer(Employee):
+    def __init__(self, name):
+        super().__init__(name, "Головний інженер")
+
+    def get_salary(self):
+        return 1800  # Зарплата головного інженера
+
+
+class SoftwareEngineer(Employee):
+    def __init__(self, name):
+        super().__init__(name, "Інженер-програміст")
+
+    def get_salary(self):
+        return 1500  # Зарплата інженера-програміста
+
+
+class SystemAdministrator(Employee):
+    def __init__(self, name):
+        super().__init__(name, "Системний адміністратор")
+
+    def get_salary(self):
+        return 1300  # Зарплата системного адміністратора
+
+
+# Клас, який делегує обчислення зарплат
+class SalaryCalculator:
+    def __init__(self, employee):
+        self.employee = employee  # Делегуємо об'єкт працівника
+
+    def calculate_salary(self):
+        return self.employee.get_salary()
+
+
+# Консольна програма
+def main():
+    employees = [
+        DepartmentHead("Олександр"),
+        ChiefEngineer("Ірина"),
+        SoftwareEngineer("Дмитро"),
+        SystemAdministrator("Марія")
+    ]
+
+    while True:
+        print("\n1. Переглянути інформацію про працівників\n2. Обчислити зарплату працівника\n3. Вийти")
+        choice = input("Оберіть опцію: ")
+
+        if choice == '1':
+            print("Персонал комп'ютерного відділу:")
+            for employee in employees:
+                print(employee)
+
+        elif choice == '2':
+            name = input("Введіть ім'я працівника для обчислення зарплати: ")
+            selected_employee = next((emp for emp in employees if emp.name.lower() == name.lower()), None)
+
+            if selected_employee:
+                calculator = SalaryCalculator(selected_employee)
+                salary = calculator.calculate_salary()
+                print(f"Зарплата працівника {selected_employee.name}: {salary} грн")
+            else:
+                print("Працівника з таким іменем не знайдено.")
+
+        elif choice == '3':
+            print("Завершення програми.")
+            break
+
+        else:
+            print("Невірний вибір. Спробуйте ще раз.")
+
+
+if __name__ == "__main__":
+    main()
